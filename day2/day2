@@ -1,0 +1,75 @@
+from collections import Counter
+
+aoc_txt = 'puzzle_input.txt'
+
+
+def count_chars(s, chars):
+    # print(f'Searching for occurrences of character "{s}" in "{chars}"')
+    _count = Counter(chars)
+    cnt = _count[s]
+    # print(cnt)
+    return cnt
+
+
+def compare_occurrences_with_policy(policy, counted_occurrences):
+    allowed_occurrence = policy.split('-')  # splits into min and max occurrences
+    if int(allowed_occurrence[0]) <= int(counted_occurrences) <= int(allowed_occurrence[1]):
+        return True
+    else:
+        return False
+
+
+def compare_occurrences_with_new_policy(policy, char, password):
+    index_to_check = policy.split('-')  # splits into list with two indexes to check
+    _cnt = 0
+
+    # -1 because not zero based index
+    if password[int(index_to_check[0]) - 1] == char:
+        _cnt += 1
+    if password[int(index_to_check[1]) - 1] == char:
+        _cnt += 1
+
+    # only 1 occurrence is allowed, less or more is false
+    if _cnt == 1:
+        # print(f'Was looking for "{char}" on index {int(index_to_check[0])-1} and {int(index_to_check[1])-1} in {list(enumerate(password))}')
+        return True
+
+    return False
+
+
+def aoc_day2_1():
+    valid_password = 0
+    with open(aoc_txt, 'r') as puzzle:
+        lines = puzzle.readlines()
+        for line in lines:
+            replaced = line.replace(':', '').replace('\n', '')  # prepare data for easy splitting
+            splitted = replaced.split(' ')
+            # for better reading - set variables
+            char = splitted[1]
+            password = splitted[2]
+            count = count_chars(char, password)
+            policy = splitted[0]
+            if compare_occurrences_with_policy(policy, count):
+                valid_password += 1
+    print(f'Challenge 2.1 - Found {valid_password} valid passwords')
+
+
+def aoc_day2_2():
+    valid_password = 0
+    with open(aoc_txt, 'r') as puzzle:
+        lines = puzzle.readlines()
+        for line in lines:
+            replaced = line.replace(':', '').replace('\n', '')  # prepare data for easy splitting
+            splitted = replaced.split(' ')
+            # for better reading - set variables
+            policy = splitted[0]
+            char = splitted[1]
+            password = splitted[2]
+            if compare_occurrences_with_new_policy(policy, char, password):
+                valid_password += 1
+    print(f'Challenge 2.2 - Found {valid_password} valid passwords')
+
+
+# could have been done with passing a version param to the same function - lazy
+aoc_day2_1()
+aoc_day2_2()
